@@ -1,6 +1,6 @@
 const knex = require('../config/database')
 const bcrypt = require('bcrypt')
-
+const Mail = require('../services/Mail')
 
 class User{
     constructor({email, password, fullname, birth, nickname} = data){
@@ -22,9 +22,12 @@ class User{
                 birth: this.birth,
                 nickname: this.nickname,
             }
-            console.log(data)
-
+            
             const user = await knex('users').insert(this)
+            
+            const mail = new Mail("DevTube <transational@devtube.io>", this.email, "Welcome to DevTube", `Olá ${this.fullname}, Seja Bem Vindo ao <b>DevTube</b> !`);
+            await mail.send()
+
         } catch (error) {
             return error
         }
