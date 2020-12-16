@@ -22,11 +22,11 @@ class Mail{
 
     conf(){
         return nodemailer.createTransport({
-            host: "smtp.mailtrap.io",
-            port: 2525,
+            host: process.env.MAIL_HOST,
+            port: process.env.MAIL_PORT,
             auth: {
-                user: "b06f59aaf09624",
-                pass: "677b45ee5e4365"
+                user: process.env.MAIL_USER,
+                pass: process.env.MAIL_PASS
             }
           });
     }
