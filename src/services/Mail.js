@@ -10,14 +10,14 @@ class Mail{
 
     async send(){
         const transporter = this.conf()
-        await transporter.sendMail({
+        const info = await transporter.sendMail({
             from: this.from, // sender address
             to: this.to, // list of receivers
             subject: this.subject, // Subject line
             html: this.html, // plain text body
           });
 
-        console.log("Message sent: %s", info.messageId);
+        console.log("Message sent: %s", info);
     }
 
     conf(){

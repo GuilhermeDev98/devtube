@@ -1,9 +1,11 @@
 const knex = require('../config/database')
 const bcrypt = require('bcrypt')
 const Mail = require('../services/Mail')
+const Model = require('./Model')
 
-class User{
+class User extends Model{
     constructor({email, password, fullname, birth, nickname} = data){
+        super()
         this.email = email
         this.password = password
         this.fullname = fullname
@@ -23,9 +25,9 @@ class User{
                 nickname: this.nickname,
             }
             
-            const user = await knex('users').insert(this)
+            const user = await knex('users').insert(data)
             
-            const mail = new Mail("DevTube <transational@devtube.io>", this.email, "Welcome to DevTube", `Olá ${this.fullname}, Seja Bem Vindo ao <b>DevTube</b> !`);
+            const mail = new Mail("DevTube <transational@devtube.io>", "Welcome to DevTube", `Olá ${this.fullname}, Seja Bem Vindo ao <b>DevTube</b> !`);
             await mail.send()
 
         } catch (error) {
