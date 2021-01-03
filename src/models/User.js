@@ -4,14 +4,6 @@ const Mail = require('../services/Mail')
 const Model = require('./Model')
 
 class User extends Model{
-    constructor({email, password, fullname, birth, nickname} = data){
-        super()
-        this.email = email
-        this.password = password
-        this.fullname = fullname
-        this.birth = birth
-        this.nickname = nickname
-    }
 
     async store(){
 
@@ -27,8 +19,8 @@ class User extends Model{
             
             const user = await knex('users').insert(data)
             
-            const mail = new Mail("DevTube <transational@devtube.io>", "Welcome to DevTube", `Olá ${this.fullname}, Seja Bem Vindo ao <b>DevTube</b> !`);
-            await mail.send()
+            //const mail = new Mail("DevTube <transational@devtube.io>", "Welcome to DevTube", `Olá ${this.fullname}, Seja Bem Vindo ao <b>DevTube</b> !`);
+            //await mail.send()
 
         } catch (error) {
             return error
@@ -46,28 +38,59 @@ class User extends Model{
         return hash;
     }
 
-    async find(email, password){
+    async find(data){
         try {
-            const user = knex('users').where({email})
+            const selectUser = await knex('users').where('email', data.email).select('id', 'password', 'fullname', 'nickname')
+            const user = selectUser[0]
 
             if(!user){
                 return new Error('E-Mail Not Found !')
             }
 
-            const comparePassword = this.comparePassword(password, user.password)
+
+            const comparePassword = await this.comparePassword(data.password, user.password)
 
             if(!comparePassword){
                 return new Error('Incorrect Password !')
             }
 
-            return true;
-
+            return user
             
         } catch (error) {
             return error;
         }
     }
+    async authenticate({email, password}) {
+        const emaiil = await knex('users').where('email', data.email).select('email')
+        const passwordd = await knex('users').where('email', data.email).select('password')
+        const id = await knex('users').where('email', data.email).select('id')
 
+        console.log(email, id)
+    
+        if (!emaiil || !bcrypt.compareSync(password, passwordd.passwordHash)) {
+            throw 'Username or password is incorrect';
+        }
+    
+        // authentication successful so generate jwt and refresh tokens
+        const jwtToken = generateJwtToken(user);
+        const refreshToken = generateAccessToken(user);
+    
+        // save refresh token
+        await refreshToken.save();
+    
+        // return basic details and tokens
+        return { 
+            ...basicDetails(user),
+            jwtToken,
+            refreshToken: refreshToken.token
+        };
+    }
+
+     
+
+}
+function generateAccessToken(user) {
+    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '120s' });
 }
 
 module.exports = User
