@@ -58,7 +58,7 @@ app.get('/logged', authenticateToken, (req, res) => {
 })
 
 function authenticateToken(req, res, next) {
-  const authHeader = req.headers['x-access-token'];
+  const authHeader = req.headers['access-token'];
   if (!authHeader) return res.status(401).json({ auth: false, message: 'No token provided.' });
   console.log("Token:",authHeader);
  
@@ -69,7 +69,6 @@ function authenticateToken(req, res, next) {
     next()
   });
 }
-
 
 app.listen(PORT, () => {
     console.info(`Server Running on Port ${PORT}`)
