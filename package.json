@@ -21,6 +21,8 @@
     "nodemon": "^2.0.6"
   },
   "scripts": {
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "dev2": "nodemon src/authServer.js"
+
   }
 }

@@ -54,7 +54,7 @@ const posts = [  //Exemplo de BD, remover assim que implementar o BD real
 ]
 
 app.get('/posts', authenticateToken, (req, res) => {
-  res.json(posts.filter(post => post.Id === req.user.id)); //Enviar resultado do banco de dados para o usuário
+  res.json(posts.filter(post => post.Id === req.user.id)); //Enviar resultado tratado do banco de dados para o usuário
 })
 
 function authenticateToken(req, res, next) {
