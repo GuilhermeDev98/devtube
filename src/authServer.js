@@ -62,7 +62,7 @@ app.post('/login', (req, res, next) => {
 })
 
 function generateAccessToken(user) {
-  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '60s' });
+  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '600s' });
 }
 
 const PORT = process.env.APP_PORT2
