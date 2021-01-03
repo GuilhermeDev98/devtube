@@ -26,7 +26,7 @@ app.delete('/logout', (req, res) => {
   res.sendStatus(204)
 })
 
-app.post('/login', (req, res) => {
+app.post('/login', (req, res, next) => {
   // Authenticate User
 
   const username = req.body.username
@@ -34,23 +34,24 @@ app.post('/login', (req, res) => {
 
   if(req.body.username === 'Jim' && req.body.password === '0123456789'){ //Verificação no Banco de dados
   
-  const idUser = 2; //capturar ID de acordo com o teste acima
-  const user = { id: idUser };
-  const accessToken = generateAccessToken(user);
-  const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET)
-  refreshTokens.push(refreshToken)
-  res.json({ auth: true, accessToken: accessToken, refreshToken: refreshToken })
+    const idUser = 2; //capturar ID de acordo com o teste acima
+    const user = { id: idUser };
+    const accessToken = generateAccessToken(user);
+    const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET)
+    refreshTokens.push(refreshToken)
+    res.json({ auth: true, accessToken: accessToken, refreshToken: refreshToken })
 
+  }else{
+    res.status(500).json({message: 'Login inválido!'});
   }
 
-  res.status(500).json({message: 'Login inválido!'});
 })
 
 function generateAccessToken(user) {
-  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '60s' });
+  return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '300s' });
 }
 
-const PORT = 4000
+const PORT = process.env.APP_PORT2
 app.listen(PORT, () => {
   console.info(`Server Running on Port ${PORT}`)
-})
+})  
