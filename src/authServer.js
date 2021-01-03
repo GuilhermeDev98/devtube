@@ -30,9 +30,9 @@ app.post('/login', (req, res) => {
   const username = req.body.username
   const password = req.body.password
 
-  if(req.body.username === 'Jim' && req.body.password === '0123456789'){ //Primeira verificação no Banco de dados
+  if(req.body.username === 'Jim' && req.body.password === '0123456789'){ //Verificação no Banco de dados
   
-  const idUser = 2; //Verificar o ID no banco de dados
+  const idUser = 2; //capturar ID de acordo com o teste acima
   const user = { id: idUser };
   const accessToken = generateAccessToken(user);
   const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN_SECRET)
