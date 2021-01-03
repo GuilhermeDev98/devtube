@@ -65,8 +65,6 @@ function authenticateToken(req, res, next) {
   jwt.verify(authHeader, process.env.ACCESS_TOKEN_SECRET, function(err, user){
     console.log(err)
     if (err) return res.status(500).json({ auth: false, message: 'Failed to authenticate token.' });
-   
-   // se tudo estiver ok, salva no request para uso posterior
     req.user = user
     next()
   });
