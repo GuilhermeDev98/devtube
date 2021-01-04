@@ -60,33 +60,27 @@ class User extends Model{
             return error;
         }
     }
+
     async authenticate({email, password}) {
-        const emaiil = await knex('users').where('email', data.email).select('email')
-        const passwordd = await knex('users').where('email', data.email).select('password')
-        const id = await knex('users').where('email', data.email).select('id')
+        const dbemail = await knex('users').where("email", email)
 
-        console.log(email, id)
-    
-        if (!emaiil || !bcrypt.compareSync(password, passwordd.passwordHash)) {
-            throw 'Username or password is incorrect';
-        }
-    
-        // authentication successful so generate jwt and refresh tokens
-        const jwtToken = generateJwtToken(user);
-        const refreshToken = generateAccessToken(user);
-    
-        // save refresh token
-        await refreshToken.save();
-    
-        // return basic details and tokens
-        return { 
-            ...basicDetails(user),
-            jwtToken,
-            refreshToken: refreshToken.token
-        };
+        if (JSON.stringify(dbemail[0]) != undefined || JSON.stringify(dbemail[0]) != null){
+            
+            const dbpassword = dbemail[0].password
+            const dbid = dbemail[0].id            
+            
+            const comparePassword = await this.comparePassword(password, dbpassword)
+           
+            if(comparePassword === true){               
+                return dbemail[0].id
+            }
+        }        
     }
-
-     
+    async logged({id}){
+        const dbemail = await knex('users').where("id", id) 
+        return dbemail[0]
+            
+    }
 
 }
 function generateAccessToken(user) {
