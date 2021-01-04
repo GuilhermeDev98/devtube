@@ -9,8 +9,11 @@ module.exports = {
             res.json(userId)
 
         } catch (error) {
-            res.status(500)
-            res.json(error)
+            res.status(500).json(error)
         }
+    },
+
+    async get(req, res){
+        res.json('ok')
     }
 }
