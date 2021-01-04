@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-module.exports = (req, res, next) => {
+module.exports = (req, res, next) => {  //Verifica o token de acesso, returna o id de usuário caso seja válido
     const authHeader = req.headers['access-token']; 
     if (!authHeader) return res.status(401).json({ auth: false, message: 'No token provided.' });  
     jwt.verify(authHeader, process.env.ACCESS_TOKEN_SECRET, function(err, user){
