@@ -47,7 +47,6 @@ class User extends Model{
                 return new Error('E-Mail Not Found !')
             }
 
-
             const comparePassword = await this.comparePassword(data.password, user.password)
 
             if(!comparePassword){
@@ -64,7 +63,7 @@ class User extends Model{
     async authenticate({email, password}) {
         const dbemail = await knex('users').where("email", email)
 
-        if (JSON.stringify(dbemail[0]) != undefined || JSON.stringify(dbemail[0]) != null){
+        if (JSON.stringify(dbemail[0]) != undefined && JSON.stringify(dbemail[0]) != null){
             
             const dbpassword = dbemail[0].password
             const dbid = dbemail[0].id            
