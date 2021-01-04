@@ -1,4 +1,4 @@
-const User = require('../models/User')
+const Auth = require('../models/Auth')
 const jwt = require('jsonwebtoken')
 
 let refreshTokens = []
@@ -7,7 +7,7 @@ module.exports = {
     
     async login(req, res){
 
-        const modelUser = new User()
+        const modelUser = new Auth()
         const data = req.body
         const user = await modelUser.authenticate(data)
         const userId = { id: user}
@@ -35,7 +35,7 @@ module.exports = {
     },
 
     async logged(req, res){
-        const modelUser = new User()
+        const modelUser = new Auth()
         const data = req.user
         const user = await modelUser.logged(data)
         res.json(user);
