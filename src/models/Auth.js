@@ -9,11 +9,6 @@ class User extends Model{
         return match;
     }
 
-    async encriptPassword (password){
-        const hash = bcrypt.hashSync(password, 10);
-        return hash;
-    }
-
     async authenticate({email, password}) {
         const dbemail = await knex('users').where("email", email)
 
