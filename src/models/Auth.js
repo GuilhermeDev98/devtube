@@ -19,7 +19,7 @@ class Auth extends Model{
             const dbpassword = dbemail[0].password
             const comparePassword = await this.comparePassword(password, dbpassword)        //Compara a senha enviada com o banco de dados
            
-            if(comparePassword === true){           //Returna id caso email e senha estejam ok              
+            if(comparePassword === true){           //Retorna id caso email e senha estejam ok              
                 return dbemail[0].id
             }
         }        
