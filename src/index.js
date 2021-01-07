@@ -18,8 +18,7 @@ app.use(cors());
 
 app.use(express.json())
 
-//app.use(`/api/${APP_VERSION}`, routes);
-app.use(routes)
+app.use(`/api/${APP_VERSION}`, routes);
 
 app.listen(PORT, () => {
     console.info(`Server Running on Port ${PORT}`)

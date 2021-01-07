@@ -7,8 +7,17 @@ module.exports = {
     
     async login(req, res){
 
-        const modelUser = new Auth()
         const data = req.body
+
+        if(!data.email){
+            res.status(203).json({message: 'Email is required'})
+        }
+
+        if(!data.password){
+            res.status(203).json({message: 'Email is required'})
+        }
+
+        const modelUser = new Auth()
         const user = await modelUser.authenticate(data)
         const userId = { id: user}
         if(user!== undefined){
@@ -20,7 +29,7 @@ module.exports = {
             res.status(203).json({message: 'Username or password is incorrect'}) ;
         }
     },
-    async token(req, res){
+    async refreshToken(req, res){
        
         const refreshToken = req.body.refreshToken
         const accessToken = req.body.accessToken

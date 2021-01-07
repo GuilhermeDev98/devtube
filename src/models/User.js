@@ -14,9 +14,9 @@ class User extends Model{
     }
 
     async store(){
-
         try {
             const password = await this.encriptPassword(this.password)
+
             const data = {
                 email: this.email,
                 password,
@@ -24,12 +24,21 @@ class User extends Model{
                 birth: this.birth,
                 nickname: this.nickname,
             }
-            
-            const user = await knex('users').insert(data)
-            
-            const mail = new Mail("DevTube <transational@devtube.io>", "Welcome to DevTube", `Olá ${this.fullname}, Seja Bem Vindo ao <b>DevTube</b> !`);
-            await mail.send()
 
+            const emailWasRegistered = await knex('users').where('email', this.email)
+
+            if(emailWasRegistered.length > 0){
+                return false;
+            }else{
+
+                const userId = await knex('users').insert(data)
+                const user = await knex('users').where('id', userId[0]).select(['id', 'email', 'fullname', 'birth', 'nickname', 'channel_id', 'created_at', 'updated_at'])
+                
+                //const mail = new Mail("DevTube <transational@devtube.io>", "Welcome to DevTube", `Olá ${this.fullname}, Seja Bem Vindo ao <b>DevTube</b> !`);
+                //await mail.send()
+
+                return user[0]
+            }
         } catch (error) {
             return error
         }
@@ -42,7 +51,7 @@ class User extends Model{
     }
 
     async encriptPassword (password){
-        const hash = bcrypt.hashSync(password, 10);
+        const hash = await bcrypt.hashSync(password, 10);
         return hash;
     }
 
@@ -51,20 +60,20 @@ class User extends Model{
             const user = knex('users').where({email})
 
             if(!user){
-                return new Error('E-Mail Not Found !')
+                throw new Error('E-Mail Not Found !')
             }
 
             const comparePassword = this.comparePassword(password, user.password)
 
             if(!comparePassword){
-                return new Error('Incorrect Password !')
+                throw new Error('Incorrect Password !')
             }
 
             return true;
 
             
         } catch (error) {
-            return error;
+            throw new Error('Erro ao procurar e-mail');
         }
     }
 

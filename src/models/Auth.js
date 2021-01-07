@@ -2,9 +2,9 @@ const knex = require('../config/database')
 const bcrypt = require('bcrypt')
 const Model = require('./Model')
 
-class User extends Model{
+class Auth extends Model{
 
-    //Função do bcrypt para comparar senha criptograda
+    //Função do bcrypt para comparar senha criptografada
     async comparePassword (plainTextPassword, dbPassword){
         const match = await bcrypt.compare(plainTextPassword, dbPassword);
         return match;
@@ -31,8 +31,5 @@ class User extends Model{
     }
 
 }
-function generateAccessToken(user) {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '600s' });
-}
 
-module.exports = User
+module.exports = Auth

@@ -12,7 +12,7 @@ Router.post('/users', UsersController.store)
 
 //AUTHENTICATION
 Router.post('/auth', AuthController.login)
-Router.post('/refreshToken', AuthController.token)
+Router.post('/refreshToken', AuthController.refreshToken)
 Router.get('/logged', AuthenticateToken , AuthController.logged)
 Router.delete('/logout', AuthController.logout)
 
