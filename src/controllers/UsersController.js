@@ -9,24 +9,31 @@ module.exports = {
             try {
                 const user = new User(data)
                 try {
-                    const userRegistered = await user.store()
+                    const userRegistered = await user.store(data)
                     if(userRegistered){
                         return res.status(201).json({message: 'Usuário criado com sucesso', data: userRegistered})
+                    }else{
+                        return res.status(500).json({message: 'E-Mail já registrado', field: 'email'})
                     }
                 } catch (error) {
-                    console.log(error)
                     return res.status(500).json({message: 'E-Mail já registrado', field: 'email'})
                 }
             } catch (error) {
                 res.status(500).json({message: error.message})
             }
         }).catch(function (err) {
-            console.log(err)
             res.status(500).json({message: err.errors[0], field: err.path})
         });
     },
 
     async get(req, res){
-        res.json('ok')
+        const {user_id} = req.body
+        const userModel = new User()
+        try {
+            const user = await userModel.where(user_id, ['id', 'email', 'fullname', 'birth', 'nickname'])
+            return res.status('200').json({data: {user}})
+        } catch (error) {
+            res.status(500).json({message: 'Usuário não encontrado'})
+        }
     },
 }

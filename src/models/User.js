@@ -4,28 +4,17 @@ const Mail = require('../services/Mail')
 const Model = require('./Model')
 
 class User extends Model{
-    constructor({email, password, fullname, birth, nickname} = data){
+    constructor(){
         super()
-        this.email = email
-        this.password = password
-        this.fullname = fullname
-        this.birth = birth
-        this.nickname = nickname
     }
 
-    async store(){
+    async store(data){
         try {
-            const password = await this.encriptPassword(this.password)
 
-            const data = {
-                email: this.email,
-                password,
-                fullname: this.fullname,
-                birth: this.birth,
-                nickname: this.nickname,
-            }
+            const password = await this.encriptPassword(data.password)
+            const userFields = {...data, password}
 
-            const emailWasRegistered = await knex('users').where('email', this.email)
+            const emailWasRegistered = await knex('users').where('email', userFields.email)
 
             if(emailWasRegistered.length > 0){
                 return false;
