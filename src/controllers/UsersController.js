@@ -27,20 +27,41 @@ module.exports = {
     },
 
     async get(req, res){
-        const {user_id} = req.body
         const userModel = new User()
+        const {user_id} = req.body
+
         try {
-            const user = await userModel.where(user_id, ['id', 'email', 'fullname', 'birth', 'nickname'])
+            const user = await userModel.where(user_id, ['id', 'email', 'fullname', 'birth', 'nickname', 'type', 'active'])
             return res.status('200').json({data: {user}})
         } catch (error) {
-            res.status(500).json({message: 'Usuário não encontrado'})
-        }
+            res.status(500).json({message: 'User not found'})
+        }     
     },
 
     async delete(req, res){
-        const {user_id} = req.body
-        const userModel = new User()
-        const deleteUser = await userModel.delete(user_id)
-        console.log(deleteUser)
+        try {
+            const userModel = new User()
+            const {user_id} = req.body
+
+            //Get user logged id e select your type (user, admin ...)
+            const userAuthenticated = req.user.id
+            const getType = await userModel.where({id: userAuthenticated}, ['type'])
+
+            // Cheks if the user logged is admin or if the user id that will be deleted is equal to logged
+            if(getType == 'admin' || userAuthenticated == user_id){
+                try {
+                    const userModel = new User()
+                    await userModel.delete(user_id)
+                    return res.status(200).json({message: "User deleted", data: {user_id}})
+                } catch (error) {
+                    return res.status(404).json({message: error.message})
+                }
+            }else{
+                return res.status(500).json({message: 'Permission denied'})
+            }  
+
+        } catch (error) {
+            return res.status(500).json({message: error.message})
+        } 
     }
 }
