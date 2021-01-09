@@ -3,6 +3,30 @@ const knex = require('../config/database')
 const UserStoreValidator = require('../Http/Validators/User/Store')
 
 module.exports = {
+
+    async index(req, res){
+        const user_id =  req.params.id
+
+        if(user_id){
+            const userModel = new User()
+    
+            try {
+                const user = await userModel.where({id : user_id}, ['id', 'email', 'fullname', 'birth', 'nickname', 'type', 'active'])
+                return res.status('200').json({data: {user: user[0]}})
+            } catch (error) {
+                res.status(500).json({message: 'User not found'})
+            }   
+        }else{
+            try {
+                const userModel = new User()
+                const getAllUsers =  await userModel.where({}, ['id', 'fullname', 'birth', 'nickname', 'channel_id'])
+                return res.status(200).json(getAllUsers)
+            } catch (error) {
+                return res.status(500).json({message: error.message})
+            }
+        }
+    },
+
     async store(req, res){
         const data = req.body
         UserStoreValidator.validate({...data}).then(async function (valid) {
@@ -24,18 +48,6 @@ module.exports = {
         }).catch(function (err) {
             res.status(500).json({message: err.errors[0], field: err.path})
         });
-    },
-
-    async get(req, res){
-        const userModel = new User()
-        const {user_id} = req.body
-
-        try {
-            const user = await userModel.where(user_id, ['id', 'email', 'fullname', 'birth', 'nickname', 'type', 'active'])
-            return res.status('200').json({data: {user}})
-        } catch (error) {
-            res.status(500).json({message: 'User not found'})
-        }     
     },
 
     async delete(req, res){

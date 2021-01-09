@@ -24,7 +24,7 @@ class Model {
         const model = this.getModelName()
         const query = await knex(model).where({...search}).select(fields)
         if(query.length >= 1){
-            return query[0]
+            return query
         }else{
             throw new Error('Data not founded')
         }
