@@ -1,6 +1,6 @@
 const Auth = require('../models/Auth')
 const jwt = require('jsonwebtoken')
-const UserAuthValidator = require('../Http/Validators/User/Auth')
+const UserAuthValidator = require('../Http/Validators/Auth/Auth')
 let refreshTokens = []
 
 module.exports = {
@@ -68,5 +68,6 @@ module.exports = {
 }
 
 function generateAccessToken(user) {
-    return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '600s' });
+   // return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '600s' }); //Produção
+   return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET); //Desenvolvimento
 }
