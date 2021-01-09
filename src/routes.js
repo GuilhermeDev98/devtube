@@ -7,9 +7,9 @@ const UsersController = require('./controllers/UsersController')
 const AuthController = require('./controllers/AuthController')
 
 //REGISTER
-Router.get('/users', UsersController.get)
+Router.get('/users', AuthenticateToken, UsersController.get)
 Router.post('/users', UsersController.store)
-Router.delete('/users', UsersController.delete)
+Router.delete('/users', AuthenticateToken, UsersController.delete)
 
 //AUTHENTICATION
 Router.post('/auth', AuthController.login)
