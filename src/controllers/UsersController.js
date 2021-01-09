@@ -36,4 +36,11 @@ module.exports = {
             res.status(500).json({message: 'Usuário não encontrado'})
         }
     },
+
+    async delete(req, res){
+        const {user_id} = req.body
+        const userModel = new User()
+        const deleteUser = await userModel.delete(user_id)
+        console.log(deleteUser)
+    }
 }

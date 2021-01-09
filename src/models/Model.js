@@ -21,10 +21,15 @@ class Model {
     }
 
     async where(search, fields){
-        console.log(search, fields)
         const model = this.getModelName()
         const query = await knex(model).where({...search}).select(fields)
         return query[0]
+    }
+
+    async delete(id){
+        const model = this.getModelName()
+        const query = await knex(model).where({id: id}).del()
+        return query
     }
 }
 
