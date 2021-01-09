@@ -1,6 +1,6 @@
 const Auth = require('../models/Auth')
 const jwt = require('jsonwebtoken')
-
+const UserAuthValidator = require('../Http/Validators/User/Auth')
 let refreshTokens = []
 
 module.exports = {
@@ -9,26 +9,32 @@ module.exports = {
 
         const data = req.body
 
-        if(!data.email){
-            res.status(203).json({message: 'Email is required'})
-        }
+        UserAuthValidator.validate({...data}).then(async function (valid) {
+            try 
+            {
+                const modelUser = new Auth()
+                const user = await modelUser.authenticate(data)
+                const userId = { id: user}
+                if(user!== undefined){
+                    const accessToken = generateAccessToken(userId)
+                    const refreshToken = jwt.sign(userId, process.env.REFRESH_TOKEN_SECRET)
+                    refreshTokens.push(refreshToken)
+                    res.json({ auth: true, accessToken: accessToken, refreshToken: refreshToken })
+                }else{
+                    res.status(203).json({message: 'Email e/ou senha está incorreto.'}) ;
+                }   
+            }   
+            catch (error) {
+                res.status(500).json({message: error.message})
+            }
+            
+        }).catch(function (err) 
+        {
+            res.status(500).json({message: err.errors[0], field: err.path})
+        }); 
 
-        if(!data.password){
-            res.status(203).json({message: 'Email is required'})
-        }
-
-        const modelUser = new Auth()
-        const user = await modelUser.authenticate(data)
-        const userId = { id: user}
-        if(user!== undefined){
-            const accessToken = generateAccessToken(userId)
-            const refreshToken = jwt.sign(userId, process.env.REFRESH_TOKEN_SECRET)
-            refreshTokens.push(refreshToken)
-            res.json({ auth: true, accessToken: accessToken, refreshToken: refreshToken })
-        }else{
-            res.status(203).json({message: 'Username or password is incorrect'}) ;
-        }
     },
+    
     async refreshToken(req, res){
        
         const refreshToken = req.body.refreshToken

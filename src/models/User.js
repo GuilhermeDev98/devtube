@@ -20,7 +20,7 @@ class User extends Model{
                 return false;
             }else{
 
-                const userId = await knex('users').insert(data)
+                const userId = await knex('users').insert(userFields)
                 const user = await knex('users').where('id', userId[0]).select(['id', 'email', 'fullname', 'birth', 'nickname', 'channel_id', 'created_at', 'updated_at'])
                 
                 //const mail = new Mail("DevTube <transational@devtube.io>", "Welcome to DevTube", `Olá ${this.fullname}, Seja Bem Vindo ao <b>DevTube</b> !`);
