@@ -11,6 +11,7 @@ exports.up = function(knex) {
             table.integer('channel_id', 10).unsigned().references('id').inTable('channels')
             table.enu('type', ['user', 'admin', 'support', 'streamer']).defaultTo('user').notNullable()
             table.boolean('active').defaultTo('true').notNullable()
+            table.string('refresh_token')
             table.timestamp('created_at').defaultTo(knex.fn.now())
             table.timestamp('updated_at').defaultTo(knex.fn.now())
         })

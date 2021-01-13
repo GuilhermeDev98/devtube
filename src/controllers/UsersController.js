@@ -6,7 +6,7 @@ module.exports = {
 
     async index(req, res){
         const user_id =  req.params.id
-        const fields = ['id', 'email', 'fullname', 'birth', 'nickname', 'type', 'active']
+        const fields = ['id', 'email', 'fullname', 'birth', 'nickname', 'type', 'active','channel_id', 'created_at', 'updated_at']
 
         if(user_id){
             const userModel = new User()
@@ -38,10 +38,10 @@ module.exports = {
                     if(userRegistered){
                         return res.status(201).json({message: 'Usuário criado com sucesso', data: userRegistered})
                     }else{
-                        return res.status(500).json({message: 'E-Mail já registrado', field: 'email'})
+                        return res.status(403).json({message: 'E-mail já registrado', field: 'email'})
                     }
                 } catch (error) {
-                    return res.status(500).json({message: 'E-Mail já registrado', field: 'email'})
+                    return res.status(403).json({message: 'E-mail já registrado', field: 'email'})
                 }
             } catch (error) {
                 res.status(500).json({message: error.message})

@@ -1,7 +1,6 @@
 const Auth = require('../models/Auth')
 const jwt = require('jsonwebtoken')
 const UserAuthValidator = require('../Http/Validators/Auth/Auth')
-let refreshTokens = []
 
 module.exports = {
     
@@ -18,10 +17,10 @@ module.exports = {
                 if(user!== undefined){
                     const accessToken = generateAccessToken(userId)
                     const refreshToken = jwt.sign(userId, process.env.REFRESH_TOKEN_SECRET)
-                    refreshTokens.push(refreshToken)
+                    await modelUser.login(user, refreshToken)
                     res.json({ auth: true, accessToken: accessToken, refreshToken: refreshToken })
                 }else{
-                    res.status(203).json({message: 'Email e/ou senha está incorreto.'}) ;
+                    res.status(403).json({message: 'E-mail e/ou senha estão incorretos.'}) ;
                 }   
             }   
             catch (error) {
@@ -36,20 +35,29 @@ module.exports = {
     },
     
     async refreshToken(req, res){
-       
-        const refreshToken = req.body.refreshToken
-        const accessToken = req.body.accessToken
-        if (refreshToken == null) return res.sendStatus(401)
-        if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403)
-        jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET, (err) => {
-            if (err) return res.sendStatus(403)
-            jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-             if (err) return res.sendStatus(403)
-                const accessToken = generateAccessToken({auth: user.auth, id: user.id })
-                res.json({ accessToken: accessToken })
+        try{
+            const modelUser = new Auth()
+            const refreshToken = req.body.refreshToken
+    
+            jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, function(err, user){
+                if (err) return res.sendStatus(403)
+                req.user = user
             })
-        })
+    
+            const dataId = {id:  req.user.id, token: refreshToken}
+            const result = await modelUser.refreshToken(dataId)
+            if (result){
+                const accessToken = generateAccessToken({ id: req.user.id })
+                res.json({ accessToken: accessToken })
+            }else{
+                res.sendStatus(403)
+            }
+        }catch (error) {
+           res.sendStatus(500)
+        }
+       
     },
+    
 
     async logged(req, res){
         const modelUser = new Auth()
@@ -59,10 +67,26 @@ module.exports = {
     },
 
     async logout(req, res){
+        try{
+            const modelUser = new Auth()
+            const refreshToken = req.body.refreshToken
+    
+            jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, function(err, user){
+                if (err) return res.sendStatus(403)
+                req.user = user
+            })
+    
+            const dataId = {id:  req.user.id, token: refreshToken}
+            const result = await modelUser.logout(dataId)
+            if (result == true){
+                res.status(200).json({ auth: false, accessToken: null })
+            }else{
+                res.sendStatus(403)
+            }
+        }catch (error) {
+           res.sendStatus(500)
+        }
        
-        refreshTokens = refreshTokens.filter(token => token !== req.body.refreshToken)
-        res.json({ auth: false, accessToken: null })
-         
     }
     
 }
