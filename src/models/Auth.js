@@ -12,7 +12,7 @@ class Auth extends Model{
 
     //Autenticação por email e senha
     async authenticate({email, password}) {
-        const dbemail = await knex('users').where("email", email)
+        const dbemail = await knex('users').where("email", email.toLowerCase())
 
         if (JSON.stringify(dbemail[0]) != undefined && JSON.stringify(dbemail[0]) != null){  //Verifica se email existe no banco de dados
             

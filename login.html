@@ -39,21 +39,28 @@
                 <p class="description description-second">ou use seu e-mail para se cadastrar</p>
                 <form class="form" id="registerForm">
                     <label class="label-input" for="">
+                        <i class="far fa-address-card icon-modify"></i>
+                        <input type="text" name="fullname" id="regName" placeholder="Nome Completo" required>
+                    </label> 
+                    <label class="label-input" for="">
                         <i class="far fa-user icon-modify"></i>
-                        <input type="text" name="fullname" id="regName" placeholder="Nome" required>
-                    </label>                    
+                        <input type="text" name="nickname" id="regNickname" placeholder="Apelido" required>
+                    </label>                   
                     <label class="label-input" for="">
                         <i class="far fa-envelope icon-modify"></i>
                         <input type="email" name="email" id="regEmail" placeholder="Email" required>
                     </label>
+                  
                     <label class="label-input" for="">
                         <i class="fas fa-lock icon-modify"></i>
                         <input type="password" name="password" id="regPass" placeholder="Senha" required>
                     </label>
                     <label class="label-input" for="">
                         <i class="fas fa-table icon-modify"></i>
-                        <input type="date" name="birth" id="regDate" placeholder="dd/mm/aaa" required>
+                        <input type="date" name="birth" id="regDate" placeholder="dd/mm/aaa" max= "2021-12-12" required>
                     </label>
+
+                    <div class="error-display" id = "error-register-email"></div>
                                        
                     <button class="btn btn-second" id="register-btn">Criar</button>        
                 </form>
@@ -83,7 +90,8 @@
                     </ul>
                 </div>
                 <p class="description description-second">ou:</p>
-                <form method="" action="" class="form">               
+                <form method="" action="" class="form">
+                    <div id="error-register" style="display: none;"></div>              
                     <label class="label-input" for="">
                         <i class="far fa-envelope icon-modify"></i>
                         <input type="email" id="loginEmail" placeholder="Email">

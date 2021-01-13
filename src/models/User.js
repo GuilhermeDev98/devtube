@@ -10,9 +10,9 @@ class User extends Model{
 
     async store(data){
         try {
-
+            const email = data.email.toLowerCase()
             const password = await this.encriptPassword(data.password)
-            const userFields = {...data, password}
+            const userFields = {...data, email, password}
 
             const emailWasRegistered = await knex('users').where('email', userFields.email)
 

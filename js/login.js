@@ -17,9 +17,9 @@ registerBtn.addEventListener("click", function (e) {
             $("#register-btn").val("Criando...");
        }
     }).done(function(msg){
-        console.log('Fazendo Login')
+        $('#error-register-email').html("Cadastrado com sucesso")
    })
    .fail(function(jqXHR, textStatus, msg){
-    console.log('Deu Merda')
+    $('#error-register-email').html(jqXHR.responseJSON.message)
 });
 })
