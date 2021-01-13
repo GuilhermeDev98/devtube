@@ -32,12 +32,17 @@ class Model {
 
     async delete(id){
         const model = this.getModelName()
-        const query = await knex(model).where({id: id}).del()
-        if(query >= 1){
+        const query = await knex(model).where({id}).del()
+        if(query == 1){
             return true
         }else{
             throw new Error('Id not found')
         }
+    }
+
+    async  update(where, fields){
+        const model = this.getModelName()
+        return await knex(model).update(fields).where(where)
     }
 }
 
