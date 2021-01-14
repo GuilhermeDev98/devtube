@@ -24,7 +24,8 @@ loginBtn.addEventListener("click", function(e){
                 $("#login-btn").val("Logando...");
            }
         }).done(function(jqXHR){
-            $('#error-login').html("Logado com sucesso")  
+            $('#error-login').html("Logado com sucesso") 
+           // window.open("index.html", "_TOP"); 
        })
    })
    .fail(function(jqXHR){
