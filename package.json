@@ -18,6 +18,7 @@
     "mysql2": "^2.2.5",
     "nodemailer": "^6.4.17",
     "pluralize": "^8.0.0",
+    "uuid": "^8.3.2",
     "yup": "^0.32.8"
   },
   "devDependencies": {

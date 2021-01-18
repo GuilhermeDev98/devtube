@@ -12,11 +12,13 @@ Router.post('/users', UsersController.store)
 Router.put('/users/:id', AuthenticateToken, UsersController.update)
 Router.delete('/users', AuthenticateToken, UsersController.delete)
 
-//AUTHENTICATION
+//AUTH
 Router.post('/auth', AuthController.login)
 Router.post('/refreshToken', AuthController.refreshToken)
 Router.get('/logged', AuthenticateToken , AuthController.logged)
 Router.delete('/logout', AuthController.logout)
+Router.post('/auth/forgot' , AuthController.forgot)
+Router.get('/auth/forgot' , AuthController.alterPassword)
 
 
 module.exports = Router
