@@ -22,12 +22,8 @@ class Model {
 
     async where(search, fields){
         const model = this.getModelName()
-        const query = await knex(model).where({...search}).select(fields)
-        if(query.length >= 1){
-            return query
-        }else{
-            throw new Error('Data not founded')
-        }
+        const query = await knex(model).where(search).select(fields)
+        return query
     }
 
     async delete(id){

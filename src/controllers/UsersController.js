@@ -82,7 +82,15 @@ module.exports = {
         try {
             const userModel = new User()
             const user_id = req.params.id
-            const {fullname, birth} = req.body
+            const {email, fullname, birth, nickname} = req.body
+
+            if(email) {
+                updateUserEmail(user_id, email, res)
+            }
+
+            if(nickname) {
+                updateUserNickname(user_id, nickname, res)
+            }
 
             //Get user logged id e select your type (user, admin ...)
             const userAuthenticated = req.user.id
@@ -91,7 +99,7 @@ module.exports = {
             if(getType == 'admin' || userAuthenticated == user_id){
                 try {
                     const userModel = new User()
-                    userModel.update({id: user_id}, {fullname, birth})
+                    await userModel.update({id: user_id}, {fullname, birth})
                     return res.status(200).json({message: "User Updated", data: {user: user_id}})
                 } catch (error) {
                     return res.status(404).json({message: error.message})
@@ -103,5 +111,31 @@ module.exports = {
         } catch (error) {
             return res.status(500).json({message: error.message})
         } 
+    }
+
+    
+}
+
+async function updateUserEmail(user_id, email, res){
+    //check if email has been registered
+    const userModel = new User()
+    const emailRegistred =  await userModel.where({email}, ['email'])
+    if(emailRegistred.length >= 1){
+        return res.status(500).json({message: 'E-Mail já registrado'})
+    }else{
+        await userModel.update({id: user_id}, {email})
+         return true;
+    }
+}
+
+async function updateUserNickname(user_id, nickname, res){
+    //check if nickname has been registered
+    const userModel = new User()
+    const nicknameRegistered =  await userModel.where({nickname}, ['nickname'])
+    if(nicknameRegistered.length >= 1){
+        return res.status(500).json({message: 'Nickname já registrado'})
+    }else{
+        await userModel.update({id: user_id}, {nickname})
+         return true;
     }
 }
