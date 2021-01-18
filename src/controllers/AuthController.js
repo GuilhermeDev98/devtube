@@ -16,19 +16,20 @@ module.exports = {
             {
                 const modelUser = new Auth()
                 const user = await modelUser.authenticate(data)
-                console.log(user)
                 const userId = { id: user.id, updated_at: user.updated_at}
-                if(user!== undefined){
+                if(user !== false){
+                    
                     const accessToken = generateAccessToken(userId)
                     const refreshToken = jwt.sign(userId, process.env.REFRESH_TOKEN_SECRET)
                     await modelUser.refreshToken_Update(userId, refreshToken)
+                    console.log ("User authentication: ", req.ip)
                     res.json({ auth: true, accessToken: accessToken, refreshToken: refreshToken })
                 }else{
                     res.status(403).json({message: 'E-mail e/ou senha estão incorretos.'}) ;
                 }   
             }   
             catch (error) {
-                res.status(500).json({message: error.message})
+                res.status(500).json({ message: error.message, message2: "Deu ruim"})
             }
             
         }).catch(function (err) 
@@ -66,7 +67,6 @@ module.exports = {
     
     async login(req, res){
         const modelUser = new Auth()
-        console.log(req.user)
         const data = req.user
         const user = await modelUser.login(data)
         if(user != false){
@@ -90,6 +90,7 @@ module.exports = {
             const dataId = {id:  req.user.id, token: refreshToken}
             const result = await modelUser.logout(dataId)
             if (result == true){
+                console.log ("User Logout: ", req.ip)
                 res.status(200).json({ auth: false, accessToken: null })
             }else{
                 res.sendStatus(403)
@@ -155,7 +156,7 @@ async function generateAndSentPasswordRecovery(email){
         await userModel.update({email}, {'recovery_code': code})
         const user = await userModel.where({email}, ['fullname'])
         //sent email to user
-        const mail = new Mail("DevTube <transational@devtube.io>", email,"Recuperação de Senha ", `Olá ${user.fullname}, clique <a href="http://localhost:3333/api/v1/auth/forgot?recovery_code=${code}&email=${email}" target="_blank">aqui</a> para refazer uma nova senha !`);
+        const mail = new Mail("DevTube <transational@devtube.io>", email,"Recuperação de Senha ", `Olá ${user[0].fullname}, clique <a href="http://localhost:3333/api/v1/auth/forgot?recovery_code=${code}&email=${email}" target="_blank">aqui</a> para refazer uma nova senha !`);
         await mail.send()
         return true
     } catch (error) {

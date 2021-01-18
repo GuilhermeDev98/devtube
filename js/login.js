@@ -13,20 +13,28 @@ loginBtn.addEventListener("click", function(e){
             $("#login-btn").val("Logando...");
        }
     }).done(function(jqXHR){
-        $('#error-login').html("Logado com sucesso")
-        
+        $('#error-login').html("Logado com sucesso") 
+       
+          // window.open("index.html", "_TOP"); 
+            const tokenAccess = jqXHR.accessToken
 
-        $.ajax({
-            method: "POST",
-            url: "http://localhost:3333/api/v1/auth",
-            data,
-            beforeSend : function(){
-                $("#login-btn").val("Logando...");
+          $.ajax({
+            method: "GET",
+            url: "http://localhost:3333/api/v1/login",
+            beforeSend : function(xhr){
+                $("#login-btn").val("Buscando dados...");
+                xhr.setRequestHeader("access-token", tokenAccess);
            }
         }).done(function(jqXHR){
-            $('#error-login').html("Logado com sucesso") 
-           // window.open("index.html", "_TOP"); 
+            $('#error-login').html("Dados recebidos com sucesso.") 
+            const nome = jqXHR.fullname
+            $('#nomecompleto').html(nome)
+    
        })
+
+
+
+
    })
    .fail(function(jqXHR){
     $('#error-login').html(jqXHR.responseJSON.message)

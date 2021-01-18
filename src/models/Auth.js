@@ -22,6 +22,9 @@ class Auth extends Model{
             if(comparePassword === true){           //Retorna id caso email e senha estejam ok              
                 return ({id: dbemail[0].id, updated_at: dbemail[0].updated_at})
             }
+            else{
+                return false;
+            }
         }        
     }
 
