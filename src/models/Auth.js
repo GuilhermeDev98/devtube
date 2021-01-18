@@ -20,25 +20,31 @@ class Auth extends Model{
             const comparePassword = await this.comparePassword(password, dbpassword)        //Compara a senha enviada com o banco de dados
            
             if(comparePassword === true){           //Retorna id caso email e senha estejam ok              
-                return dbemail[0].id
+                return ({id: dbemail[0].id, updated_at: dbemail[0].updated_at})
             }
         }        
     }
 
-    async login(id, refreshToken){
-        await knex('users').where("id", id).update("refresh_token", refreshToken)
+    async refreshToken_Update(id, refreshToken){
+        await knex('users').where("id", id.id).where("updated_at", id.updated_at).update("refresh_token", refreshToken)
     }
 
-    async logged({id}){
+    async login({id, updated_at}){
         const dbemail = await knex('users').where("id", id).select('id', 'email', 'fullname', 'birth', 'nickname', 'type', 'active','channel_id', 'created_at', 'updated_at')
-        return dbemail[0]
+
+        if(JSON.stringify(updated_at) === JSON.stringify(dbemail[0].updated_at)){
+            return dbemail[0]
+        }else{
+            return false;
+        }
+      
             
     }
 
-    async refreshToken ({id, token}){
-        const dbToken = await knex('users').where("id", id).select("refresh_token")
-      
-        if(token === dbToken[0].refresh_token){
+    async refreshToken ({id, updated_at, token}){
+        const dbToken = await knex('users').where("id", id).select("refresh_token" , "updated_at")
+
+        if(token === dbToken[0].refresh_token && JSON.stringify(updated_at) === JSON.stringify(dbToken[0].updated_at)){
             return true
         }else{
             return false

@@ -7,7 +7,7 @@ const Mail = require('../services/Mail')
 
 module.exports = {
     
-    async login(req, res){
+    async auth(req, res){
 
         const data = req.body
 
@@ -16,11 +16,12 @@ module.exports = {
             {
                 const modelUser = new Auth()
                 const user = await modelUser.authenticate(data)
-                const userId = { id: user}
+                console.log(user)
+                const userId = { id: user.id, updated_at: user.updated_at}
                 if(user!== undefined){
                     const accessToken = generateAccessToken(userId)
                     const refreshToken = jwt.sign(userId, process.env.REFRESH_TOKEN_SECRET)
-                    await modelUser.login(user, refreshToken)
+                    await modelUser.refreshToken_Update(userId, refreshToken)
                     res.json({ auth: true, accessToken: accessToken, refreshToken: refreshToken })
                 }else{
                     res.status(403).json({message: 'E-mail e/ou senha estão incorretos.'}) ;
@@ -45,12 +46,14 @@ module.exports = {
             jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, function(err, user){
                 if (err) return res.sendStatus(403)
                 req.user = user
+               
             })
     
-            const dataId = {id:  req.user.id, token: refreshToken}
+            const dataId = {id: req.user.id, updated_at: req.user.updated_at, token: refreshToken}
+          
             const result = await modelUser.refreshToken(dataId)
             if (result){
-                const accessToken = generateAccessToken({ id: req.user.id })
+                const accessToken = generateAccessToken({ id: req.user.id, updated_at: req.user.updated_at })
                 res.json({ accessToken: accessToken })
             }else{
                 res.sendStatus(403)
@@ -61,12 +64,17 @@ module.exports = {
        
     },
     
-
-    async logged(req, res){
+    async login(req, res){
         const modelUser = new Auth()
+        console.log(req.user)
         const data = req.user
-        const user = await modelUser.logged(data)
-        res.json(user);
+        const user = await modelUser.login(data)
+        if(user != false){
+            res.json(user);
+        }else{
+            res.sendStatus(403)
+        }
+      
     },
 
     async logout(req, res){
@@ -147,7 +155,7 @@ async function generateAndSentPasswordRecovery(email){
         await userModel.update({email}, {'recovery_code': code})
         const user = await userModel.where({email}, ['fullname'])
         //sent email to user
-        const mail = new Mail("DevTube <transational@devtube.io>", email,"Recuperação de Senha ", `Olá ${user.fullname}, clique <a href="http://localhost:3333/api/v1/auth/forgot?recovery_code=${code}&email=${email}"> target="_blank">aqui</a> para refazer uma nova senha !`);
+        const mail = new Mail("DevTube <transational@devtube.io>", email,"Recuperação de Senha ", `Olá ${user.fullname}, clique <a href="http://localhost:3333/api/v1/auth/forgot?recovery_code=${code}&email=${email}" target="_blank">aqui</a> para refazer uma nova senha !`);
         await mail.send()
         return true
     } catch (error) {
