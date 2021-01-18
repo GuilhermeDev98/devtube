@@ -147,7 +147,7 @@ async function generateAndSentPasswordRecovery(email){
         await userModel.update({email}, {'recovery_code': code})
         const user = await userModel.where({email}, ['fullname'])
         //sent email to user
-        const mail = new Mail("DevTube <transational@devtube.io>", email,"Recuperação de Senha ", `Olá ${user.fullname}, clique <a href="http://localhost:3333/api/v1/auth/forgot?recovery_code=${code}&email=${email}"> target="_blank">aqui</a> para refazer uma nova senha !`);
+        const mail = new Mail("DevTube <transational@devtube.io>", email,"Recuperação de Senha ", `Olá ${user.fullname}, clique <a href="http://localhost:3333/api/v1/auth/forgot?recovery_code=${code}&email=${email}" target="_blank">aqui</a> para refazer uma nova senha !`);
         await mail.send()
         return true
     } catch (error) {
